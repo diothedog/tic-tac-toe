@@ -1,4 +1,3 @@
-let players = [];
 
 const gameBoard = (function () {
     let board = ["", "", "",
@@ -14,19 +13,13 @@ const gameBoard = (function () {
     return { getBoard, printBoard };  
 })();
 
-function createPlayer(name) {
-    players.push(name);
-
-    return { players };
-}
-
-const gameController = (function() {
+const playGame = function() {
     let board = gameBoard.getBoard();
 
+    gameBoard.printBoard();
+
     const playerOne = prompt("Player One, what is your name?");
-    createPlayer(playerOne);
     const playerTwo = prompt("Player Two, what is your name?");
-    createPlayer(playerTwo);
 
     let activePlayer = playerOne;
     let mark = "X"
@@ -64,12 +57,14 @@ const gameController = (function() {
             (board[2] === "O" && board[4] === "O" && board[6] === "O")
         ) {
             alert(`Game over! ${playerTwo} wins!`);
-        }
+        } else if (!board.includes("")) {
+            alert("Game over! It's a tie!")
+        } else {
+            playRound();
+        }    
     }
 
     const playRound = () => {     
-        gameBoard.printBoard();
-
         let cell = prompt(`${activePlayer}, where do you want to place your mark?`)
         let index = Number(cell);
 
@@ -80,11 +75,13 @@ const gameController = (function() {
 
         board[index] = mark;
 
-        checkForWinner();
-        
+        gameBoard.printBoard();
+
         switchTurn();
+
+        checkForWinner();
     }
 
-    return { playRound };
-})();
+    playRound();
+}
 
