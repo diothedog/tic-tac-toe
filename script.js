@@ -85,3 +85,12 @@ const playGame = function() {
     playRound();
 }
 
+const displayController = (function () {
+    const playGameBtn = document.querySelector("#play-game");
+    playGameBtn.addEventListener("click", playGame);
+
+    const drawBoard = function () {
+        const boardDiv = document.querySelector("#board-div")
+        
+    }
+})();
