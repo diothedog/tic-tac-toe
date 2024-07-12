@@ -1,0 +1,11 @@
+#board-div {
+    display: grid;
+    width: 60vh;
+    height: 60vh;
+    grid-template-columns: 20vh 20vh 20vh;
+    grid-template-rows: 20vh 20vh 20vh;
+}
+
+.board-cell {
+    border: 2px solid black;
+}

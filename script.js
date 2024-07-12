@@ -10,11 +10,19 @@ const gameBoard = (function () {
         console.log(board);
     }
 
-    return { getBoard, printBoard };  
+    const resetBoard = () => {
+        for (let i = 0; i < board.length; i++) {
+            board[i] = "";
+        }
+    }
+
+    return { getBoard, printBoard, resetBoard };  
 })();
 
 const playGame = function() {
     let board = gameBoard.getBoard();
+
+    gameBoard.resetBoard();
 
     gameBoard.printBoard();
 
@@ -77,6 +85,8 @@ const playGame = function() {
 
         gameBoard.printBoard();
 
+        displayController.drawBoard();
+
         switchTurn();
 
         checkForWinner();
@@ -89,8 +99,20 @@ const displayController = (function () {
     const playGameBtn = document.querySelector("#play-game");
     playGameBtn.addEventListener("click", playGame);
 
+    const cells = document.querySelectorAll(".board-cell");
+    let board = gameBoard.getBoard();
+
+    cells.forEach((cell) => {
+        cell.addEventListener("click", () => {
+            cell.textContent = mark;
+        })
+    })
+
     const drawBoard = function () {
-        const boardDiv = document.querySelector("#board-div")
-        
-    }
+        for (let i = 0; i < cells.length; i++) {
+            cells[i].textContent = board[i];
+        };
+    };
+
+    return { drawBoard }
 })();
