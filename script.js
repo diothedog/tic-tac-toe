@@ -8,39 +8,52 @@ const gameBoard = (function () {
 
     const printBoard = () => {
         console.log(board);
-    }
+    };
+
+    const setMark = (index, mark) => {
+        board[index] = mark;
+    };
+
+    const getMark = (index) => {
+        return board[index];
+    };
 
     const resetBoard = () => {
         for (let i = 0; i < board.length; i++) {
             board[i] = "";
-        }
-    }
+        };
+    };
 
-    return { getBoard, printBoard, resetBoard };  
+    return { 
+        getBoard, 
+        printBoard, 
+        setMark, 
+        getMark, 
+        resetBoard 
+    };  
 })();
 
-const playGame = function() {
+const createPlayer = function (mark) {
+    const getMark = () => mark;
+    let name = prompt(`Player ${mark}, what is your name?`);
+    const getName = () => name;
+    return { getMark, getName }
+};
+
+const playGame = (function () {
     let board = gameBoard.getBoard();
-
-    gameBoard.resetBoard();
-
+    let playerOne = createPlayer("X");
+    let playerOneName = playerOne.getName();
+    let playerTwo = createPlayer("O");
+    let playerTwoName = playerTwo.getName();
     gameBoard.printBoard();
 
-    const playerOne = prompt("Player One, what is your name?");
-    const playerTwo = prompt("Player Two, what is your name?");
-
     let activePlayer = playerOne;
-    let mark = "X"
+    let activeMark = playerOne.getMark();
+    
+    const getActivePlayer = () => activePlayer;
 
-    const switchTurn = () => {
-        if (activePlayer === playerOne) {
-            activePlayer = playerTwo;
-            mark = "O";
-        } else {
-            activePlayer = playerOne;
-            mark = "X";
-        }
-    }
+    const getActiveMark = () => activeMark;
 
     const checkForWinner = () => {
         if (
@@ -53,7 +66,8 @@ const playGame = function() {
             (board[0] === "X" && board[4] === "X" && board[8] === "X") ||
             (board[2] === "X" && board[4] === "X" && board[6] === "X")
         ) {
-            alert(`Game over! ${playerOne} wins!`);
+            console.log(`Game over! ${playerOneName} wins!`);
+            displayController.displayMessage(`Game over! ${playerOneName} wins!`);
         } else if (
             (board[0] === "O" && board[1] === "O" && board[2] === "O") ||
             (board[3] === "O" && board[4] === "O" && board[5] === "O") ||
@@ -64,49 +78,57 @@ const playGame = function() {
             (board[0] === "O" && board[4] === "O" && board[8] === "O") ||
             (board[2] === "O" && board[4] === "O" && board[6] === "O")
         ) {
-            alert(`Game over! ${playerTwo} wins!`);
+            console.log(`Game over! ${playerTwoName} wins!`);
+            displayController.displayMessage(`Game over! ${playerTwoName} wins!`);
         } else if (!board.includes("")) {
-            alert("Game over! It's a tie!")
-        } else {
-            playRound();
-        }    
-    }
-
-    const playRound = () => {     
-        let cell = prompt(`${activePlayer}, where do you want to place your mark?`)
-        let index = Number(cell);
-
-        while (board[index] !== "") {
-            cell = prompt("That space is already occupied. Please select another space.");
-            index = Number(cell);
+            console.log("Game over! It's a tie!")
+            displayController.displayMessage("Game over! It's a tie!");
         } 
+    };
 
-        board[index] = mark;
+    const switchTurn = () => {
+        if (activePlayer === playerOne) {
+            activePlayer = playerTwo;
+            activeMark = playerTwo.getMark()
+            displayController.displayMessage(`${playerTwoName}, it is your turn.`);
+        } else {
+            activePlayer = playerOne;
+            activeMark = playerOne.getMark();
+            displayController.displayMessage(`${playerOneName}, it is your turn.`);
+        }
+    };
 
-        gameBoard.printBoard();
+    const playRound = (index) => {
+        if (board[index] === "") {
+            gameBoard.setMark(index, activeMark);
+            switchTurn();
+            gameBoard.printBoard();
+            displayController.drawBoard();
+            checkForWinner();
+        }
+    };
 
-        displayController.drawBoard();
-
-        switchTurn();
-
-        checkForWinner();
-    }
-
-    playRound();
-}
+    return { 
+        getActivePlayer, 
+        getActiveMark,
+        playRound
+    };
+})();
 
 const displayController = (function () {
     const playGameBtn = document.querySelector("#play-game");
-    playGameBtn.addEventListener("click", playGame);
-
     const cells = document.querySelectorAll(".board-cell");
     let board = gameBoard.getBoard();
+    let activePlayer = playGame.getActivePlayer();
+    let activeMark = playGame.getActiveMark();
 
-    cells.forEach((cell) => {
-        cell.addEventListener("click", () => {
-            cell.textContent = mark;
-        })
-    })
+    const activateCells = function () {
+        for (let i = 0; i < cells.length; i++) {
+            cells[i].addEventListener("click", () => {
+                playGame.playRound(i, activeMark);
+            })
+        }
+    };
 
     const drawBoard = function () {
         for (let i = 0; i < cells.length; i++) {
@@ -114,5 +136,20 @@ const displayController = (function () {
         };
     };
 
-    return { drawBoard }
+    const startGame = function() {
+        gameBoard.resetBoard();
+        drawBoard();
+        activateCells();
+        displayMessage(`${activePlayer.getName()}, it is your turn.`)
+    };
+
+    playGameBtn.addEventListener("click", startGame);
+
+    const messageDiv = document.querySelector("#message");
+
+    function displayMessage(message) {
+        messageDiv.textContent = message;
+    };
+
+    return { drawBoard, displayMessage };
 })();
