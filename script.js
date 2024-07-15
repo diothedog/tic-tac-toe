@@ -1,3 +1,4 @@
+let players = [];
 
 const gameBoard = (function () {
     let board = ["", "", "",

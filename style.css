@@ -1,9 +1,11 @@
+
 #board-div {
     display: grid;
     width: 60vh;
     height: 60vh;
     grid-template-columns: 20vh 20vh 20vh;
     grid-template-rows: 20vh 20vh 20vh;
+    margin: auto;
 }
 
 .board-cell {
@@ -12,4 +14,30 @@
     justify-content: center;
     align-items: center;
     font-size: 10vh;
+}
+
+h1 { 
+    text-align: center;
+    font-size: 4vh;
+}
+
+#button-container {
+    display: flex;
+    justify-content: center;
+}
+
+#play-game {
+    height: 3vh;
+    width: 10vh;
+    background-color: black;
+    color: white;
+    font-weight: bold;
+    margin-top: 2vh;
+    border-radius: 10px;
+}
+
+#message {
+    font-size: 3vh;
+    margin-top: 3vh;
+    text-align: center;
 }
